@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Beheer en voeg nieuwe gitaar-, beeldhouw-, gedicht- of tekeningproducten toe aan de catalogus van T. Kempenaar." />
+  <meta name="theme-color" content="#111111" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <title>T. Kempenaar | Beheer producten</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="assets/css/style.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-xl fixed-top">
+    <div class="container">
+      <a class="navbar-brand brand-font" href="index.html">T. Kempenaar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Start</a></li>
+          <li class="nav-item"><a class="nav-link" href="guitars.html">Gitaren</a></li>
+          <li class="nav-item"><a class="nav-link" href="beeldhouwen.html">Beeldhouwen</a></li>
+          <li class="nav-item"><a class="nav-link" href="poems.html">Gedichten</a></li>
+          <li class="nav-item"><a class="nav-link" href="drawings.html">Tekeningen</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="favorites.html">Favorieten <span class="badge text-bg-dark badge-counter js-favorites-count">0</span></a></li>
+          <li class="nav-item nav-utility-start"><a class="nav-link nav-icon-link active" href="manage.html" aria-label="Beheer" title="Beheer"><i class="bi bi-sliders2" aria-hidden="true"></i></a></li>
+          
+          <li class="nav-item"><a class="nav-link nav-icon-link" href="cart.html" aria-label="Winkelwagentje" title="Winkelwagen"><i class="bi bi-cart3" aria-hidden="true"></i><span class="badge text-bg-dark badge-counter js-cart-count">0</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="manageApp" class="container page-shell">
+    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+      <p class="mono-title mb-0">Beheer</p>
+      <button id="manageLogoutBtn" class="btn btn-outline-bw btn-sm" type="button">Uitloggen</button>
+    </div>
+    <h1 class="section-title">Nieuw product toevoegen</h1>
+
+    <div class="row g-4">
+      <div class="col-12">
+        <ul class="nav nav-tabs mb-3" id="manageTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="manage-products-tab" data-bs-toggle="tab" data-bs-target="#manage-products-pane" type="button" role="tab" aria-controls="manage-products-pane" aria-selected="false">Producten</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="manage-sales-tab" data-bs-toggle="tab" data-bs-target="#manage-sales-pane" type="button" role="tab" aria-controls="manage-sales-pane" aria-selected="false">Verkoop</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="manage-security-tab" data-bs-toggle="tab" data-bs-target="#manage-security-pane" type="button" role="tab" aria-controls="manage-security-pane" aria-selected="false">Beveiliging</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="manage-social-tab" data-bs-toggle="tab" data-bs-target="#manage-social-pane" type="button" role="tab" aria-controls="manage-social-pane" aria-selected="false">Social media</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="manage-home-tab" data-bs-toggle="tab" data-bs-target="#manage-home-pane" type="button" role="tab" aria-controls="manage-home-pane" aria-selected="true">Home</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="manageTabsContent">
+          <div class="tab-pane fade" id="manage-products-pane" role="tabpanel" aria-labelledby="manage-products-tab" tabindex="0">
+            <div class="checkout-panel p-4 mb-4">
+              <form id="manageProductForm" class="row g-3">
+                <div class="col-md-4">
+                  <label for="productType" class="form-label">Type</label>
+                  <select id="productType" class="form-select" required>
+                    <option value="Guitar">Gitaar</option>
+                    <option value="Sculpture">Beeldhouwen</option>
+                    <option value="Poem">Gedicht</option>
+                    <option value="Drawing">Tekening</option>
+                  </select>
+                </div>
+                <div class="col-md-8">
+                  <label for="productTitle" class="form-label">Productnaam</label>
+                  <input id="productTitle" class="form-control" required />
+                </div>
+                <div class="col-md-4">
+                  <label for="productPrice" class="form-label">Prijs (€)</label>
+                  <input id="productPrice" class="form-control" type="number" min="0" step="1" required />
+                </div>
+                <div class="col-md-8">
+                  <label for="productImage" class="form-label">Afbeeldings-URL</label>
+                  <div class="input-group">
+                    <input id="productImage" class="form-control" placeholder="https://..." />
+                    <button id="productImagePickBtn" class="btn btn-outline-bw" type="button" title="Bestand kiezen" aria-label="Afbeeldingsbestand kiezen">+</button>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Of sleep hier een foto naartoe</label>
+                  <div id="productImageDropZone" class="image-drop-zone">
+                    <p class="mb-2">Sleep afbeelding hierheen of klik om te kiezen</p>
+                    <p class="text-muted small mb-2">Ondersteund: jpg, jpeg, png, gif, webp, bmp, svg, tif, tiff, avif, heic, heif</p>
+                    <input id="productImageFile" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg,.tif,.tiff,.avif,.heic,.heif,image/*" class="d-none" />
+                    <img id="productImagePreview" class="image-drop-preview d-none" alt="Voorbeeld van product" />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="productDescription" class="form-label">Beschrijving</label>
+                  <textarea id="productDescription" class="form-control" rows="4" required placeholder="Beschrijf het werk, de afmetingen en de gewenste stijl..."></textarea>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-bw" type="submit">Product toevoegen</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="checkout-panel p-4">
+              <h2 class="h5 mb-3">Beheerde producten</h2>
+              <div id="manageProductList"></div>
+            </div>
+
+            <div class="checkout-panel p-4 mt-4">
+              <h2 class="h5 mb-3">Gepubliceerde producten (website)</h2>
+              <p class="text-muted small mb-3">Verwijderen verbergt het product op je website. Herstellen maakt het weer zichtbaar.</p>
+              <div id="publishedProductList"></div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="manage-sales-pane" role="tabpanel" aria-labelledby="manage-sales-tab" tabindex="0">
+            <div class="checkout-panel p-4">
+              <h2 class="h5 mb-3">Verkoopoverzicht</h2>
+              <div id="manageSalesStats"></div>
+              <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                  <div class="sales-pie-wrap">
+                    <div id="manageSalesPie" class="sales-pie"></div>
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <h3 class="h6 mb-2">Verkoop per producttype</h3>
+                  <div id="manageSalesLegend"></div>
+                </div>
+              </div>
+              <h3 class="h6 mb-2">Alle verkochte producten (met datum)</h3>
+              <div id="manageSalesProducts"></div>
+              <hr class="my-4" />
+              <h3 class="h6 mb-2">Bestellingen</h3>
+              <div id="manageSalesList"></div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="manage-security-pane" role="tabpanel" aria-labelledby="manage-security-tab" tabindex="0">
+            <div class="checkout-panel p-4">
+              <h2 class="h5 mb-3">Beveiligingsinstellingen</h2>
+              <p class="text-muted mb-4">Beheer hier je logincode en QR-verificatie via een Authenticator app.</p>
+              <form id="manageSecurityForm" class="row g-3">
+                <div class="col-12">
+                  <label for="manageCurrentCode" class="form-label">Huidige code</label>
+                  <input id="manageCurrentCode" class="form-control" type="password" required autocomplete="off" />
+                </div>
+                <div class="col-md-6">
+                  <label for="manageNewCode" class="form-label">Nieuwe code</label>
+                  <input id="manageNewCode" class="form-control" type="password" minlength="4" autocomplete="off" />
+                </div>
+                <div class="col-md-6">
+                  <label for="manageConfirmCode" class="form-label">Bevestig nieuwe code</label>
+                  <input id="manageConfirmCode" class="form-control" type="password" minlength="4" autocomplete="off" />
+                </div>
+                <div class="col-12 d-flex gap-2">
+                  <button class="btn btn-bw" type="submit">Beveiliging opslaan</button>
+                </div>
+                <div class="col-12">
+                  <p id="manageSecurityMessage" class="small mb-0 d-none"></p>
+                </div>
+              </form>
+
+              <hr class="my-4" />
+
+              <h3 class="h6 mb-2">QR-verificatie (Authenticator)</h3>
+              <p class="text-muted small mb-3">Scan de QR-code met Google Authenticator, Microsoft Authenticator of een vergelijkbare app. Daarna vul je de 6-cijferige code in om te activeren.</p>
+              <form id="manageTotpForm" class="row g-3">
+                <div class="col-md-6">
+                  <label for="manageTotpAccount" class="form-label">Accountnaam in app</label>
+                  <input id="manageTotpAccount" class="form-control" placeholder="tineke@beheer" autocomplete="off" />
+                </div>
+                <div class="col-md-6 d-flex align-items-end gap-2">
+                  <button id="manageTotpGenerateBtn" class="btn btn-outline-bw" type="button">Nieuwe QR genereren</button>
+                  <button id="manageTotpDisableBtn" class="btn btn-outline-bw" type="button">QR-verificatie uitzetten</button>
+                </div>
+                <div class="col-12 d-none" id="manageTotpSetupWrap">
+                  <div class="d-flex flex-column flex-md-row gap-3 align-items-start">
+                    <img id="manageTotpQrImage" src="" alt="QR-code voor Authenticator" width="240" height="240" class="border rounded" />
+                    <div class="w-100">
+                      <label for="manageTotpManualSecret" class="form-label">Handmatige sleutel</label>
+                      <input id="manageTotpManualSecret" class="form-control mb-2" readonly />
+                      <label for="manageTotpVerifyCode" class="form-label">Code uit app (6 cijfers)</label>
+                      <input id="manageTotpVerifyCode" class="form-control" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                  <button id="manageTotpEnableBtn" class="btn btn-bw d-none" type="submit">QR-verificatie activeren</button>
+                </div>
+                <div class="col-12">
+                  <p id="manageTotpStatus" class="small mb-0 text-muted"></p>
+                  <p id="manageTotpMessage" class="small mb-0 d-none"></p>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="manage-social-pane" role="tabpanel" aria-labelledby="manage-social-tab" tabindex="0">
+            <div class="checkout-panel p-4">
+              <h2 class="h5 mb-3">Social media links</h2>
+              <p class="text-muted mb-4">Pas je social media links aan. Deze worden boven de menubalk op de hele website getoond.</p>
+              <form id="manageSocialForm" class="row g-3">
+                <div class="col-12">
+                  <div id="manageSocialList"></div>
+                </div>
+                <div class="col-12">
+                  <hr class="my-2" />
+                  <h3 class="h6 mb-2">Nieuw social media bedrijf toevoegen</h3>
+                </div>
+                <div class="col-md-4">
+                  <label for="socialNewName" class="form-label">Naam</label>
+                  <input id="socialNewName" class="form-control" placeholder="Bijv. Pinterest" />
+                </div>
+                <div class="col-md-5">
+                  <label for="socialNewUrl" class="form-label">Link</label>
+                  <input id="socialNewUrl" class="form-control" type="url" placeholder="https://pinterest.com/jouwaccount" />
+                </div>
+                <div class="col-md-3">
+                  <label for="socialNewIcon" class="form-label">Bootstrap icoon</label>
+                  <input id="socialNewIcon" class="form-control" placeholder="bi-pinterest" />
+                </div>
+                <div class="col-12 d-flex gap-2">
+                  <button id="manageSocialAddBtn" class="btn btn-outline-bw" type="button">Social media toevoegen</button>
+                  <button class="btn btn-bw" type="submit">Social links opslaan</button>
+                </div>
+                <div class="col-12">
+                  <p id="manageSocialMessage" class="small mb-0 d-none"></p>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="tab-pane show active" id="manage-home-pane" role="tabpanel" aria-labelledby="manage-home-tab" tabindex="0">
+            <div class="checkout-panel p-4">
+              <h2 class="h5 mb-3">Homepage organiseren</h2>
+              <p class="text-muted mb-4">Kies en orden welke producten op de homepage zichtbaar zijn per categorie.</p>
+
+              <div class="mb-4">
+                <h3 class="h6 mb-2">Banner beheren</h3>
+                <form id="manageHomeBannerForm" class="row g-3">
+                  <div class="col-md-8">
+                    <label for="manageHomeBannerImage" class="form-label">Banner afbeelding (URL of data-url)</label>
+                    <input id="manageHomeBannerImage" class="form-control" placeholder="jpg/hero-banner.jpg of https://..." />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="manageHomeBannerImageFile" class="form-label">Bestand kiezen</label>
+                    <input id="manageHomeBannerImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/*" />
+                  </div>
+                  <div class="col-12">
+                    <img id="manageHomeBannerPreview" class="image-drop-preview d-none" alt="Voorbeeld banner" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerTitle" class="form-label">Titel</label>
+                    <input id="manageHomeBannerTitle" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerSubtitle" class="form-label">Subtitel</label>
+                    <input id="manageHomeBannerSubtitle" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerPrimaryText" class="form-label">Knop 1 tekst</label>
+                    <input id="manageHomeBannerPrimaryText" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerPrimaryLink" class="form-label">Knop 1 link</label>
+                    <input id="manageHomeBannerPrimaryLink" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerSecondaryText" class="form-label">Knop 2 tekst</label>
+                    <input id="manageHomeBannerSecondaryText" class="form-control" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerSecondaryLink" class="form-label">Knop 2 link</label>
+                    <input id="manageHomeBannerSecondaryLink" class="form-control" />
+                  </div>
+                  <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-bw" type="submit">Banner opslaan</button>
+                    <button id="manageHomeBannerResetBtn" class="btn btn-outline-bw" type="button">Herstel standaard</button>
+                  </div>
+                  <div class="col-12">
+                    <p id="manageHomeBannerMessage" class="small mb-0 d-none"></p>
+                  </div>
+                </form>
+              </div>
+
+              <div class="mb-4">
+                <h3 class="h6 mb-2">Gitaren (dynamisch)</h3>
+                <div id="manageHomeGuitarList" class="mb-2"></div>
+                <div id="manageHomeGuitarPool"></div>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <button class="btn btn-outline-bw btn-sm js-home-section-add" data-type="guitar" type="button">+</button>
+                  <button class="btn btn-outline-bw btn-sm js-home-section-remove" data-type="guitar" type="button">-</button>
+                  <p id="manageHomeGuitarCount" class="text-muted small mb-0"></p>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h3 class="h6 mb-2">Gedichten (dynamisch)</h3>
+                <div id="manageHomePoemList" class="mb-2"></div>
+                <div id="manageHomePoemPool"></div>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <button class="btn btn-outline-bw btn-sm js-home-section-add" data-type="poem" type="button">+</button>
+                  <button class="btn btn-outline-bw btn-sm js-home-section-remove" data-type="poem" type="button">-</button>
+                  <p id="manageHomePoemCount" class="text-muted small mb-0"></p>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h3 class="h6 mb-2">Beeldhouwen (dynamisch)</h3>
+                <div id="manageHomeSculptureList" class="mb-2"></div>
+                <div id="manageHomeSculpturePool"></div>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <button class="btn btn-outline-bw btn-sm js-home-section-add" data-type="sculpture" type="button">+</button>
+                  <button class="btn btn-outline-bw btn-sm js-home-section-remove" data-type="sculpture" type="button">-</button>
+                  <p id="manageHomeSculptureCount" class="text-muted small mb-0"></p>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="h6 mb-2">Tekeningen (dynamisch)</h3>
+                <div id="manageHomeDrawingList" class="mb-2"></div>
+                <div id="manageHomeDrawingPool"></div>
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <button class="btn btn-outline-bw btn-sm js-home-section-add" data-type="drawing" type="button">+</button>
+                  <button class="btn btn-outline-bw btn-sm js-home-section-remove" data-type="drawing" type="button">-</button>
+                  <p id="manageHomeDrawingCount" class="text-muted small mb-0"></p>
+                </div>
+              </div>
+
+              <hr class="my-4" />
+
+              <div>
+                <h3 class="h6 mb-2">Recensies beheren</h3>
+                <p class="text-muted small mb-3">Voeg recensies toe of verwijder recensies. Deze worden ook gebruikt op de homepage.</p>
+                <form id="manageHomeReviewForm" class="row g-3 mb-3">
+                  <div class="col-md-4">
+                    <label for="manageHomeReviewName" class="form-label">Naam</label>
+                    <input id="manageHomeReviewName" class="form-control" required />
+                  </div>
+                  <div class="col-md-2">
+                    <label for="manageHomeReviewRating" class="form-label">Score</label>
+                    <select id="manageHomeReviewRating" class="form-select" required>
+                      <option value="5">5</option>
+                      <option value="4">4</option>
+                      <option value="3">3</option>
+                      <option value="2">2</option>
+                      <option value="1">1</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeReviewText" class="form-label">Recensie</label>
+                    <textarea id="manageHomeReviewText" class="form-control" rows="2" required></textarea>
+                  </div>
+                  <div class="col-12 d-flex align-items-center gap-2">
+                    <button class="btn btn-bw btn-sm" type="submit">Recensie toevoegen</button>
+                    <p id="manageHomeReviewCount" class="text-muted small mb-0"></p>
+                  </div>
+                  <div class="col-12">
+                    <p id="manageHomeReviewMessage" class="small mb-0 d-none"></p>
+                  </div>
+                </form>
+                <div id="manageHomeReviewList"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="py-4"><div class="container">Originele zwart-wit kunstwerken, met de hand gemaakt in kleine oplages.</div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      var tabs = document.getElementById('manageTabs');
+      var content = document.getElementById('manageTabsContent');
+      if (!tabs || !content) return;
+
+      function activateTab(button) {
+        if (!button) return;
+        var target = button.getAttribute('data-bs-target');
+        if (!target || target.charAt(0) !== '#') return;
+        var pane = content.querySelector(target);
+        if (!pane) return;
+
+        tabs.querySelectorAll('button.nav-link').forEach(function (btn) {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+
+        content.querySelectorAll('.tab-pane').forEach(function (item) {
+          item.classList.remove('show', 'active');
+          item.style.display = 'none';
+        });
+        pane.classList.add('show', 'active');
+        pane.style.display = 'block';
+      }
+
+      tabs.addEventListener('click', function (event) {
+        var button = event.target.closest('button[data-bs-target]');
+        if (!button) return;
+        event.preventDefault();
+        activateTab(button);
+      });
+
+      var initial = document.getElementById('manage-home-tab') || tabs.querySelector('button.nav-link.active');
+      activateTab(initial);
+    })();
+  </script>
+  <script src="assets/js/manage-2fa.js?v=20260424a"></script>
+  <script src="assets/js/app.js?v=20260424a"></script>
+</body>
+</html>
