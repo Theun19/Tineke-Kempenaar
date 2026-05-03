@@ -29,9 +29,19 @@ function normalizeImagePath(value) {
   return src;
 }
 
+function canRenderAsImage(value) {
+  const src = String(value || '').trim().toLowerCase();
+  if (!src) return false;
+  if (src.startsWith('data:image/')) return true;
+  if (src.startsWith('blob:')) return true;
+  if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|apng)(\?.*)?$/.test(src)) return true;
+  return false;
+}
+
 function imageSrcOrFallback(value) {
   const src = normalizeImagePath(value);
-  return src || 'jpg/gedicht.jpeg';
+  if (!src) return 'jpg/gedicht.jpeg';
+  return canRenderAsImage(src) ? src : 'jpg/gedicht.jpeg';
 }
 
 function normalizeStoredListImages(key) {
@@ -375,6 +385,8 @@ function saveHomepageSectionSizes(sizes) {
 function getHomepageBannerDefaults() {
   return {
     image: 'jpg/hero-banner.jpg',
+    positionX: 50,
+    positionY: 50,
     title: 'Tineke Kempenaar',
     subtitle: 'Maker in Lijn, Hout, Steen en Woord',
     primaryText: 'Start met gitaren',
@@ -387,8 +399,11 @@ function getHomepageBannerDefaults() {
 function normalizeHomepageBanner(value) {
   const defaults = getHomepageBannerDefaults();
   if (!value || Array.isArray(value) || typeof value !== 'object') return defaults;
+  const rawImage = String(value.image || '').trim();
   return {
-    image: normalizeImagePath(value.image) || defaults.image,
+    image: rawImage || defaults.image,
+    positionX: Number.isFinite(Number(value.positionX)) ? Math.min(100, Math.max(0, Number(value.positionX))) : defaults.positionX,
+    positionY: Number.isFinite(Number(value.positionY)) ? Math.min(100, Math.max(0, Number(value.positionY))) : defaults.positionY,
     title: String(value.title || defaults.title).trim() || defaults.title,
     subtitle: String(value.subtitle || defaults.subtitle).trim() || defaults.subtitle,
     primaryText: String(value.primaryText || defaults.primaryText).trim() || defaults.primaryText,
@@ -474,15 +489,18 @@ function renderHomeFeaturedSection(type, containerId, maxItems, emptyText) {
 
 function renderHomepageBanner() {
   const hero = document.querySelector('.hero.hero-fullscreen');
+  const image = document.getElementById('homeHeroImage');
   const title = document.getElementById('homeHeroTitle');
   const subtitle = document.getElementById('homeHeroSubtitle');
   const primaryBtn = document.getElementById('homeHeroPrimaryBtn');
   const secondaryBtn = document.getElementById('homeHeroSecondaryBtn');
-  if (!hero || !title || !subtitle || !primaryBtn || !secondaryBtn) return;
+  if (!hero || !image || !title || !subtitle || !primaryBtn || !secondaryBtn) return;
 
   const banner = getHomepageBanner();
   const heroImage = imageSrcOrFallback(banner.image);
-  hero.style.backgroundImage = `url("${heroImage.replaceAll('"', '\\"')}")`;
+  hero.style.backgroundImage = 'none';
+  image.src = heroImage;
+  image.style.objectPosition = `${banner.positionX}% ${banner.positionY}%`;
   title.textContent = banner.title;
   subtitle.textContent = banner.subtitle;
   primaryBtn.textContent = banner.primaryText;
@@ -1311,6 +1329,8 @@ function bindManageHomeBannerForm() {
   const imagePreview = document.getElementById('manageHomeBannerPreview');
   const titleInput = document.getElementById('manageHomeBannerTitle');
   const subtitleInput = document.getElementById('manageHomeBannerSubtitle');
+  const posXInput = document.getElementById('manageHomeBannerPosX');
+  const posYInput = document.getElementById('manageHomeBannerPosY');
   const primaryTextInput = document.getElementById('manageHomeBannerPrimaryText');
   const primaryLinkInput = document.getElementById('manageHomeBannerPrimaryLink');
   const secondaryTextInput = document.getElementById('manageHomeBannerSecondaryText');
@@ -1318,7 +1338,7 @@ function bindManageHomeBannerForm() {
   const resetBtn = document.getElementById('manageHomeBannerResetBtn');
   const message = document.getElementById('manageHomeBannerMessage');
   if (
-    !imageInput || !imageFileInput || !imagePreview || !titleInput || !subtitleInput || !primaryTextInput ||
+    !imageInput || !imageFileInput || !imagePreview || !titleInput || !subtitleInput || !posXInput || !posYInput || !primaryTextInput ||
     !primaryLinkInput || !secondaryTextInput || !secondaryLinkInput || !resetBtn || !message
   ) return;
 
@@ -1328,15 +1348,29 @@ function bindManageHomeBannerForm() {
     message.classList.add(isError ? 'text-danger' : 'text-success');
   }
 
+  function getBannerPreviewRatio() {
+    const viewportW = Math.max(360, window.innerWidth || 1280);
+    const topOffset = window.matchMedia('(max-width: 991.98px)').matches ? 142 : 165;
+    const heroH = Math.max(320, (window.innerHeight || 800) - topOffset);
+    return Math.max(0.8, Math.min(2.8, viewportW / heroH));
+  }
+
+  function updateBannerPreviewGeometry() {
+    const ratio = getBannerPreviewRatio();
+    imagePreview.style.aspectRatio = String(ratio);
+  }
+
   function setPreview(src) {
     const normalized = normalizeImagePath(src);
-    if (!normalized) {
+    if (!normalized || !canRenderAsImage(normalized)) {
       imagePreview.classList.add('d-none');
       imagePreview.removeAttribute('src');
       return;
     }
     imagePreview.src = normalized;
+    imagePreview.style.objectPosition = `${posXInput.value || 50}% ${posYInput.value || 50}%`;
     imagePreview.classList.remove('d-none');
+    updateBannerPreviewGeometry();
   }
 
   function fillFormFromBanner() {
@@ -1344,6 +1378,8 @@ function bindManageHomeBannerForm() {
     imageInput.value = banner.image;
     titleInput.value = banner.title;
     subtitleInput.value = banner.subtitle;
+    posXInput.value = String(Math.round(banner.positionX));
+    posYInput.value = String(Math.round(banner.positionY));
     primaryTextInput.value = banner.primaryText;
     primaryLinkInput.value = banner.primaryLink;
     secondaryTextInput.value = banner.secondaryText;
@@ -1352,9 +1388,55 @@ function bindManageHomeBannerForm() {
   }
 
   fillFormFromBanner();
+  updateBannerPreviewGeometry();
+  window.addEventListener('resize', updateBannerPreviewGeometry, { passive: true });
 
   imageInput.addEventListener('input', () => {
     setPreview(imageInput.value);
+  });
+
+  function refreshPreviewPosition() {
+    if (imagePreview.classList.contains('d-none')) return;
+    imagePreview.style.objectPosition = `${posXInput.value || 50}% ${posYInput.value || 50}%`;
+  }
+
+  posXInput.addEventListener('input', refreshPreviewPosition);
+  posYInput.addEventListener('input', refreshPreviewPosition);
+
+  let dragging = false;
+  function updateFromPointer(event) {
+    if (imagePreview.classList.contains('d-none')) return;
+    const rect = imagePreview.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    const clampedX = Math.max(0, Math.min(100, x));
+    const clampedY = Math.max(0, Math.min(100, y));
+    posXInput.value = String(Math.round(clampedX * 10) / 10);
+    posYInput.value = String(Math.round(clampedY * 10) / 10);
+    refreshPreviewPosition();
+  }
+
+  imagePreview.addEventListener('pointerdown', (event) => {
+    if (imagePreview.classList.contains('d-none')) return;
+    dragging = true;
+    imagePreview.classList.add('is-dragging');
+    updateFromPointer(event);
+    imagePreview.setPointerCapture(event.pointerId);
+  });
+
+  imagePreview.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    updateFromPointer(event);
+  });
+
+  imagePreview.addEventListener('pointerup', (event) => {
+    dragging = false;
+    imagePreview.classList.remove('is-dragging');
+    try {
+      imagePreview.releasePointerCapture(event.pointerId);
+    } catch (error) {
+      // no-op
+    }
   });
 
   imageFileInput.addEventListener('change', () => {
@@ -1363,8 +1445,9 @@ function bindManageHomeBannerForm() {
 
     const lowerName = String(file.name || '').toLowerCase();
     const allowedByMime = String(file.type || '').startsWith('image/');
-    const allowedByExt = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tif|tiff|avif|heic|heif)$/i.test(lowerName);
-    if (!allowedByMime && !allowedByExt) {
+    const isPdf = String(file.type || '').toLowerCase() === 'application/pdf' || lowerName.endsWith('.pdf');
+    const allowedByExt = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tif|tiff|avif|heic|heif|pdf)$/i.test(lowerName);
+    if (!allowedByMime && !allowedByExt && !isPdf) {
       setMessage('Kies een geldig afbeeldingsbestand.', true);
       return;
     }
@@ -1381,8 +1464,12 @@ function bindManageHomeBannerForm() {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    const current = getHomepageBanner();
+    const imageValue = String(imageInput.value || '').trim();
     const next = normalizeHomepageBanner({
-      image: imageInput.value.trim(),
+      image: imageValue || current.image,
+      positionX: Number(posXInput.value || 50),
+      positionY: Number(posYInput.value || 50),
       title: titleInput.value.trim(),
       subtitle: subtitleInput.value.trim(),
       primaryText: primaryTextInput.value.trim(),
@@ -1705,12 +1792,13 @@ function bindManageImageUpload() {
   if (!dropZone || !fileInput || !imageInput || !preview) return;
 
   function setPreview(src) {
-    if (!src) {
+    const normalized = normalizeImagePath(src);
+    if (!normalized || !canRenderAsImage(normalized)) {
       preview.classList.add('d-none');
       preview.removeAttribute('src');
       return;
     }
-    preview.src = src;
+    preview.src = normalized;
     preview.classList.remove('d-none');
   }
 
@@ -1718,8 +1806,9 @@ function bindManageImageUpload() {
     if (!file) return;
     const lowerName = String(file.name || '').toLowerCase();
     const allowedByMime = String(file.type || '').startsWith('image/');
-    const allowedByExt = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tif|tiff|avif|heic|heif)$/i.test(lowerName);
-    if (!allowedByMime && !allowedByExt) return;
+    const isPdf = String(file.type || '').toLowerCase() === 'application/pdf' || lowerName.endsWith('.pdf');
+    const allowedByExt = /\.(jpg|jpeg|png|gif|webp|bmp|svg|tif|tiff|avif|heic|heif|pdf)$/i.test(lowerName);
+    if (!allowedByMime && !allowedByExt && !isPdf) return;
 
     // SVG is usually compact enough; keep original data URL.
     if (lowerName.endsWith('.svg') || file.type === 'image/svg+xml') {
@@ -1728,6 +1817,17 @@ function bindManageImageUpload() {
         const src = String(event.target?.result || '');
         imageInput.value = src;
         setPreview(src);
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    if (isPdf) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const src = String(event.target?.result || '');
+        imageInput.value = src;
+        setPreview('');
       };
       reader.readAsDataURL(file);
       return;
@@ -1791,16 +1891,7 @@ function bindManageImageUpload() {
       setPreview('');
       return;
     }
-    if (
-      value.startsWith('http') ||
-      value.startsWith('../') ||
-      value.startsWith('./') ||
-      value.startsWith('/jpg/') ||
-      value.startsWith('jpg/') ||
-      value.startsWith('data:image')
-    ) {
-      setPreview(value);
-    }
+    setPreview(value);
   });
 }
 
@@ -2729,7 +2820,6 @@ function injectA11yWidget() {
 }
 
 function bindAccessibilityFeatures() {
-  injectSkipLink();
   injectA11yWidget();
   ensureLiveRegion();
 
@@ -2783,6 +2873,43 @@ function enhanceNavigationAccessibility() {
   });
 }
 
+function injectMobileCartShortcut() {
+  const nav = document.querySelector('.navbar');
+  if (!nav) return;
+  const container = nav.querySelector('.container');
+  const toggler = nav.querySelector('.navbar-toggler');
+  if (!container || !toggler) return;
+  if (container.querySelector('.mobile-cart-shortcut')) return;
+  const collapse = nav.querySelector('.navbar-collapse');
+
+  const shortcut = document.createElement('a');
+  shortcut.href = 'cart.html';
+  shortcut.className = 'mobile-cart-shortcut';
+  shortcut.setAttribute('aria-label', 'Winkelwagentje');
+  shortcut.setAttribute('title', 'Winkelwagen');
+  shortcut.innerHTML = '<i class="bi bi-cart3" aria-hidden="true"></i><span class="badge text-bg-dark badge-counter js-cart-count">0</span>';
+
+  toggler.insertAdjacentElement('afterend', shortcut);
+
+  function syncVisibility() {
+    const isOpen = Boolean(collapse && collapse.classList.contains('show'));
+    shortcut.classList.toggle('is-menu-open', isOpen);
+  }
+
+  syncVisibility();
+
+  toggler.addEventListener('click', () => {
+    shortcut.classList.add('is-menu-open');
+  });
+
+  if (collapse) {
+    collapse.addEventListener('show.bs.collapse', syncVisibility);
+    collapse.addEventListener('shown.bs.collapse', syncVisibility);
+    collapse.addEventListener('hide.bs.collapse', syncVisibility);
+    collapse.addEventListener('hidden.bs.collapse', syncVisibility);
+  }
+}
+
 function bindScrollTopButton() {
   if (document.querySelector('.scroll-top-btn')) return;
   const button = document.createElement('button');
@@ -2802,6 +2929,57 @@ function bindScrollTopButton() {
   button.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+}
+
+function bindBrandScrollRed() {
+  const brand = document.querySelector('.navbar .brand-font');
+  if (!brand) return;
+
+  let lastY = window.scrollY;
+  let lastT = performance.now();
+  let intensityLevel = 0;
+  let rafId = 0;
+  const isDark = () => document.body.classList.contains('theme-dark');
+
+  function setBrandColor(level) {
+    const t = Math.max(0, Math.min(1, Number(level) || 0));
+    const from = isDark() ? [241, 241, 241] : [17, 17, 17];
+    const to = [208, 0, 0];
+    const r = Math.round(from[0] + ((to[0] - from[0]) * t));
+    const g = Math.round(from[1] + ((to[1] - from[1]) * t));
+    const b = Math.round(from[2] + ((to[2] - from[2]) * t));
+    brand.style.setProperty('color', `rgb(${r}, ${g}, ${b})`, 'important');
+  }
+
+  function animate() {
+    intensityLevel *= 0.9;
+    if (intensityLevel < 0.005) intensityLevel = 0;
+    setBrandColor(intensityLevel);
+    if (intensityLevel > 0) {
+      rafId = requestAnimationFrame(animate);
+    } else {
+      rafId = 0;
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    const now = performance.now();
+    const y = window.scrollY;
+    const dt = Math.max(8, now - lastT);
+    const dy = Math.abs(y - lastY);
+    const pxPerMs = dy / dt;
+
+    // Map scroll speed to red intensity with a sensible cap.
+    const intensity = Math.min(1, pxPerMs / 1.6);
+    intensityLevel = Math.max(intensityLevel, intensity);
+    setBrandColor(intensityLevel);
+
+    if (!rafId) rafId = requestAnimationFrame(animate);
+    lastY = y;
+    lastT = now;
+  }, { passive: true });
+
+  setBrandColor(0);
 }
 
 function getAnchorTargetFromHash(hash) {
@@ -2856,6 +3034,7 @@ function bindAnchorOffsetNavigation() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  safeRun('Mobiele cart shortcut', () => injectMobileCartShortcut());
   normalizeStoredListImages(CART_KEY);
   normalizeStoredListImages(FAVORITES_KEY);
   normalizeStoredListImages(CUSTOM_PRODUCTS_KEY);
@@ -2891,5 +3070,6 @@ document.addEventListener('DOMContentLoaded', () => {
   safeRun('Navigatie a11y', () => enhanceNavigationAccessibility());
   safeRun('Actieve nav', () => setActiveNavAriaCurrent());
   safeRun('Naar boven knop', () => bindScrollTopButton());
+  safeRun('Brand scroll red', () => bindBrandScrollRed());
   safeRun('Manage beveiliging', () => protectManagePage());
 });

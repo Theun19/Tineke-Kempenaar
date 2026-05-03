@@ -93,7 +93,7 @@
                   <div id="productImageDropZone" class="image-drop-zone">
                     <p class="mb-2">Sleep afbeelding hierheen of klik om te kiezen</p>
                     <p class="text-muted small mb-2">Ondersteund: jpg, jpeg, png, gif, webp, bmp, svg, tif, tiff, avif, heic, heif</p>
-                    <input id="productImageFile" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg,.tif,.tiff,.avif,.heic,.heif,image/*" class="d-none" />
+                    <input id="productImageFile" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg,.tif,.tiff,.avif,.heic,.heif,.pdf,image/*,application/pdf" class="d-none" />
                     <img id="productImagePreview" class="image-drop-preview d-none" alt="Voorbeeld van product" />
                   </div>
                 </div>
@@ -251,10 +251,19 @@
                   </div>
                   <div class="col-md-4">
                     <label for="manageHomeBannerImageFile" class="form-label">Bestand kiezen</label>
-                    <input id="manageHomeBannerImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/*" />
+                    <input id="manageHomeBannerImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg,.tif,.tiff,.avif,.heic,.heif,.pdf,image/*,application/pdf" />
                   </div>
                   <div class="col-12">
                     <img id="manageHomeBannerPreview" class="image-drop-preview d-none" alt="Voorbeeld banner" />
+                    <p class="text-muted small mb-0 mt-1">Sleep in het voorbeeld om het zichtbare deel van de banner te kiezen.</p>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerPosX" class="form-label">Horizontale positie</label>
+                    <input id="manageHomeBannerPosX" class="form-control" type="range" min="0" max="100" step="1" />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="manageHomeBannerPosY" class="form-label">Verticale positie</label>
+                    <input id="manageHomeBannerPosY" class="form-control" type="range" min="0" max="100" step="1" />
                   </div>
                   <div class="col-md-6">
                     <label for="manageHomeBannerTitle" class="form-label">Titel</label>
