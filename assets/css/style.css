@@ -165,7 +165,7 @@ html {
 }
 
 .navbar .navbar-nav .nav-utility-start {
-  margin-left: 0;
+  margin-left: 0.25rem;
 }
 
 @media (min-width: 1200px) {
@@ -256,6 +256,10 @@ html {
   margin-left: 0;
 }
 
+.navbar a[href="cart.html"].nav-icon-link {
+  margin-left: 0.25rem;
+}
+
 .navbar-toggler {
   border: 1px solid #c6c6c6;
   border-radius: 999px;
@@ -273,7 +277,7 @@ html {
 .nav-theme-item {
   display: flex;
   align-items: center;
-  margin-left: 0.65rem;
+  margin-left: 0.9rem;
 }
 
 .theme-switch {
@@ -1177,11 +1181,11 @@ body.review-modal-open {
   }
 
   .nav-utility-start {
-    margin-left: 0;
+    margin-left: 0.25rem;
   }
 
   .nav-theme-item {
-    margin-left: 0;
+    margin-left: 0.25rem;
   }
 
   .bw-thumb {
