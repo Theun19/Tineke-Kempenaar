@@ -1106,6 +1106,7 @@ body.review-modal-open {
   .navbar .navbar-nav {
     width: 100%;
     justify-content: flex-start;
+    align-items: flex-start;
   }
 
   .navbar .container {
@@ -1186,6 +1187,10 @@ body.review-modal-open {
     margin-bottom: 0;
   }
 
+  .navbar .navbar-collapse .navbar-nav > .nav-item {
+    width: 100%;
+  }
+
   .navbar .navbar-nav {
     gap: 0.45rem;
   }
@@ -1210,6 +1215,7 @@ body.review-modal-open {
   }
 
   .navbar .navbar-collapse a[href="cart.html"].nav-icon-link {
+    display: inline-flex;
     margin-left: 0;
   }
 
