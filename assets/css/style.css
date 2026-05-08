@@ -1199,6 +1199,15 @@ body.review-modal-open {
     margin-top: 0.25rem;
   }
 
+  .navbar .navbar-collapse .nav-item:has(> a[href="cart.html"].nav-icon-link) {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .navbar .navbar-collapse a[href="cart.html"].nav-icon-link {
+    margin-left: 0;
+  }
+
   .bw-thumb {
     height: 304px;
   }
