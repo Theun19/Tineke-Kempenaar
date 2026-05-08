@@ -1176,13 +1176,18 @@ body.review-modal-open {
 
   .navbar-collapse {
     margin-top: 0.65rem;
-    padding-top: 0.55rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
     border-top: 1px solid #e3e3e3;
   }
 
   .navbar .nav-link,
   .navbar .navbar-nav > .nav-item {
     margin-bottom: 0;
+  }
+
+  .navbar .navbar-nav {
+    gap: 0.45rem;
   }
 
   .nav-utility-start {
