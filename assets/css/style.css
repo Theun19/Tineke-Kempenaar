@@ -168,6 +168,11 @@ html {
   margin-left: 0.25rem;
 }
 
+.navbar .navbar-nav > .nav-theme-item + .nav-utility-start,
+.navbar .navbar-nav > .nav-utility-start + .nav-item {
+  margin-left: 0.25rem;
+}
+
 @media (min-width: 1200px) {
   .navbar .container {
     display: grid;
@@ -1186,6 +1191,12 @@ body.review-modal-open {
 
   .nav-theme-item {
     margin-left: 0.25rem;
+  }
+
+  .navbar .navbar-nav > .nav-theme-item + .nav-utility-start,
+  .navbar .navbar-nav > .nav-utility-start + .nav-item {
+    margin-left: 0;
+    margin-top: 0.25rem;
   }
 
   .bw-thumb {
